@@ -1,8 +1,7 @@
 import control
 import matplotlib.pyplot as plt
 import numpy 
-
-
+import math
 '''
            a*s + b
 K(s) = -------------------
@@ -13,175 +12,229 @@ s = control.TransferFunction.s
 
 
 '''
-impulse responses to different parameters
+step responses to different parameters
 '''
-# a)
+# proportional term
+
 p1 = plt.figure(1)
 
-G = (1/2*s + 1)/(s**2 + s + 1)
-H = (s + 1)/(s**2 + s + 1)
-I = (2*s + 1)/(s**2 + s + 1)
-J = (4*s + 1)/(s**2 + s + 1)
-K = (-2*s + 1)/(s**2 + s + 1)
+G = -2*(s - 2)/(0*s**2 + s - 2)
+H = -1/2*(s - 2)/(0*s**2 + s - 2)
+I = 0*(s - 2)/(0*s**2 + s - 2)
+J = 1/2*(s - 2)/(0*s**2 + s - 2)
+K = 1*(s - 2)/(0*s**2 + s - 2)
+L = 2*(s - 2)/(0*s**2 + s - 2)
 
 t = numpy.linspace(0,30,1000)
 
-t, yout = control.impulse_response(G, T=t, X0=5)
-plot1 = plt.plot(t, yout, label = "a=1/2")
+t, yout = control.impulse_response(G, T=t)
+plot1 = plt.plot(t, yout, label = "K=-2")
 
 t, yout = control.impulse_response(H, T=t)
-plot2 = plt.plot(t, yout, label = "a=1")
+plot2 = plt.plot(t, yout, label = "K=-1/2")
 
 t, yout = control.impulse_response(I, T=t)
-plot3 = plt.plot(t, yout, label = "a=2")
+plot3 = plt.plot(t, yout, label = "K(s) = 0")
 
 t, yout = control.impulse_response(J, T=t)
-plot4 = plt.plot(t, yout, label = "a=4")
+plot4 = plt.plot(t, yout, label = "K(s) = 1/2")
 
 t, yout = control.impulse_response(K, T=t)
-plot5 = plt.plot(t, yout, label = "a=-2")
+plot5 = plt.plot(t, yout, label = "K(s) = 1")
 
-plt.xlim((0,10))
-plt.ylim((-4,10))
-plt.title('Changing a')
+t, yout = control.impulse_response(L, T=t)
+plot6 = plt.plot(t, yout, label = "K(s) = 2")
+
+plt.xlim((0,30))
+plt.ylim((-3,3))
+plt.title('Proportional')
 plt.xlabel('Time [sec]')
 plt.ylabel('Amplitude')
 plt.legend(loc="upper right")
 plt.grid()
 
-# b)
+# inertial I term
+'''
+             k
+K(s) = ----------------
+           1 + sT
+'''
 p2 = plt.figure(2)
 
-G = (s - 2)/(s**2 + s + 1)
-H = (s)/(s**2 + s + 1)
-I = (s + 1)/(s**2 + s + 1)
-J = (s + 2)/(s**2 + s + 1)
+G = 2/(s+1)
+H = 3/(3*s+1)
+I = 5/(6*s+1)
+J = 4/(2*s+1)
 
 t = numpy.linspace(0,30,1000)
 
 t, yout = control.impulse_response(G, T=t)
-plot1 = plt.plot(t, yout, label = "b=-2")
+plot1 = plt.plot(t, yout, label = "K(s) = 2/(s+1)")
 
 t, yout = control.impulse_response(H, T=t)
-plot2 = plt.plot(t, yout, label = "b=0")
+plot2 = plt.plot(t, yout, label = "K(s) = 3/(3*s+1)")
 
 t, yout = control.impulse_response(I, T=t)
-plot3 = plt.plot(t, yout, label = "b=1")
+plot3 = plt.plot(t, yout, label = "K(s) = 5/(6*s+1)")
 
 t, yout = control.impulse_response(J, T=t)
-plot4 = plt.plot(t, yout, label = "b=2")
+plot4 = plt.plot(t, yout, label = "K(s) = 4/(2*s+1)")
 
-plt.xlim((0,10))
-plt.ylim((-2,2))
-plt.title('Changing b')
+plt.xlim((0,30))
+plt.ylim((-3,6))
+plt.title('Inertial I')
 plt.xlabel('Time [sec]')
 plt.ylabel('Amplitude')
-plt.legend(loc="upper right")
+plt.legend(loc="lower right")
 plt.grid()
 
-# c)
+# oscillating inertial II
+'''
+               k
+K(s) = -------------------
+         (1+sT1)*(1+sT2)
+'''
+# |ksi| < 1
+
 p3 = plt.figure(3)
 
-G = (s + 1)/((-1)*s**2 + s + 1)
-H = (s + 1)/(s + 1)
-I = (s + 1)/(1/2*s**2 + s + 1)
-J = (s + 1)/(2* s**2 + s + 1)
-K = (s + 1)/(-2* s**2 + s + 1)
+G = 1/(s**2 - 3*s + 9)
+H = 1/(s**2 + 2*s + 4)
+I = 1/(s**2 + 0*s + 1)
+
 
 t = numpy.linspace(0,30,1000)
 
 t, yout = control.impulse_response(G, T=t)
-plot1 = plt.plot(t, yout, label = "c=-1")
+plot1 = plt.plot(t, yout, label = "K(s) = 1/(s**2 - 3*s + 9)")
 
 t, yout = control.impulse_response(H, T=t)
-plot2 = plt.plot(t, yout, label = "c=0")
+plot2 = plt.plot(t, yout, label = "K(s) = 1/(s**2 + 2*s + 4)")
 
 t, yout = control.impulse_response(I, T=t)
-plot3 = plt.plot(t, yout, label = "c=1/2")
-
-t, yout = control.impulse_response(J, T=t)
-plot4 = plt.plot(t, yout, label = "c=2")
-
-t, yout = control.impulse_response(K, T=t)
-plot4 = plt.plot(t, yout, label = "c=-2")
+plot3 = plt.plot(t, yout, label = "K(s) = 1/(s**2 + 0*s + 1)")
 
 plt.xlim((0,15))
-plt.ylim((-10,3))
-plt.title('Changing c')
+plt.ylim((-10,10))
+plt.title('Oscillating inertial II')
 plt.xlabel('Time [sec]')
 plt.ylabel('Amplitude')
 plt.legend(loc="upper right")
-
 plt.grid()
 
 
-# d)
+# integral
+'''
+             k
+K(s) = ---------------
+          s*(Ts+1)
+'''
+
+
+
 p4 = plt.figure(4)
 
-G = (s + 1)/(s**2 - 1/2*s + 1)
-H = (s + 1)/(s**2 + 1)
-I = (s + 1)/(s**2 + s + 1)
-J = (s + 1)/(s**2 + 2*s + 1)
-K = (s + 1)/(s**2 + 1/2*s + 1)
+G = 1/(s*(1 + 2*s))
+H = 2/(s*(1 + 3*s))
+I = 3/(s*(1 + 2*s))
 
 t = numpy.linspace(0,30,1000)
 
 t, yout = control.impulse_response(G, T=t)
-plot1 = plt.plot(t, yout, label = "d=-1/2")
+plot1 = plt.plot(t, yout, label = "K(s) = 1/(s*(1 + 2*s))")
 
 t, yout = control.impulse_response(H, T=t)
-plot2 = plt.plot(t, yout, label = "d=0")
+plot2 = plt.plot(t, yout, label = "K(s) = 2/(s*(1 + 3*s))")
 
 t, yout = control.impulse_response(I, T=t)
-plot3 = plt.plot(t, yout, label = "d=1")
+plot3 = plt.plot(t, yout, label = "K(s) = 3/(s*(1 + 2*s))")
 
-t, yout = control.impulse_response(J, T=t)
-plot4 = plt.plot(t, yout, label = "d=2")
 
-t, yout = control.impulse_response(K, T=t)
-plot5 = plt.plot(t, yout, label = "d=1/2")
-
-plt.xlim((0,10))
-plt.ylim((-10,10))
-plt.title('Changing d')
+plt.xlim((0,20))
+plt.ylim((-3,10))
+plt.title('Integral')
 plt.xlabel('Time [sec]')
 plt.ylabel('Amplitude')
 plt.legend(loc="upper right")
-
 plt.grid()
 
-# e)
+
+# derivative
+
+'''
+              T*s
+K(s) = ------------------
+             Td*s+1
+'''
+
 p5 = plt.figure(5)
 
-G = (s + 1)/(s**2 + s - 1)
-H = (s + 1)/(s**2 + s)
-I = (s + 1)/(s**2 + s + 1/2)
-J = (s + 1)/(s**2 + s + 2)
-K = (s + 1)/(s**2 + s - 1/2)
+
+G = s/(s+1)
+H = 2*s/(3*s+1)
+I = 3*s/(2*s+1)
+J = 8*s/(4*s+1)
+
 
 t = numpy.linspace(0,30,1000)
 
 t, yout = control.impulse_response(G, T=t)
-plot1 = plt.plot(t, yout, label = "e=-1")
+plot1 = plt.plot(t, yout, label = "K(s) = s/(s+1))")
 
 t, yout = control.impulse_response(H, T=t)
-plot2 = plt.plot(t, yout, label = "e=0")
+plot2 = plt.plot(t, yout, label = "K(s) = 2*s/(3*s+1)")
 
 t, yout = control.impulse_response(I, T=t)
-plot3 = plt.plot(t, yout, label = "e=1/2")
+plot3 = plt.plot(t, yout, label = "K(s) = 3*s/(2*s+1)")
 
 t, yout = control.impulse_response(J, T=t)
-plot4 = plt.plot(t, yout, label = "e=2")
+plot4 = plt.plot(t, yout, label = "K(s) = 4*s/(4*s+1)")
 
-t, yout = control.impulse_response(K, T=t)
-plot5 = plt.plot(t, yout, label = "e=-1/2")
-
-plt.xlim((0,10))
-plt.ylim((-1,10))
-plt.title('Changing e')
+plt.xlim((0,15))
+plt.ylim((-3,3))
+plt.title('Derivative')
 plt.xlabel('Time [sec]')
 plt.ylabel('Amplitude')
 plt.legend(loc="upper right")
-
 plt.grid()
+
+
+
+# non - oscillating in II
+'''
+               k
+K(s) = -------------------
+         (1+sT1)*(1+sT2)     
+'''
+# |ksi| > 1
+
+p6 = plt.figure(6)
+
+G = 1/(s**2 - 8*s + 4)
+H = 1/(s**2 + 4*s + 1)
+# I = 1/(s**2 + s + 1)
+# J = 1/(s**2 + 2*s + 1)
+
+t = numpy.linspace(0,30,1000)
+
+t, yout = control.impulse_response(G, T=t)
+plot1 = plt.plot(t, yout, label = "K(s) = 1/(s**2 - 8*s + 4)")
+
+t, yout = control.impulse_response(H, T=t)
+plot2 = plt.plot(t, yout, label = "K(s) = 1/(s**2 + 4*s + 1)")
+
+# t, yout = control.impulse_response(I, T=t)
+# plot3 = plt.plot(t, yout, label = "d=1")
+
+# t, yout = control.impulse_response(J, T=t)
+# plot4 = plt.plot(t, yout, label = "d=2")
+
+plt.xlim((0,20))
+plt.ylim((-10,10))
+plt.title('Non-oscillating inertial II')
+plt.xlabel('Time [sec]')
+plt.ylabel('Amplitude')
+plt.legend(loc="upper right")
+plt.grid()
+
 plt.show()
